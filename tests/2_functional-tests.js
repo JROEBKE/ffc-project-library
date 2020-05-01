@@ -9,14 +9,15 @@
 var chaiHttp = require('chai-http');
 var chai = require('chai');
 var assert = chai.assert;
-var server = require('../server');
-var expect = chai.expect;
 var should = require('chai').should();
+var server = require('../server');
+
 
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
 
+  //This example will fail because we delete all books at the ende of this test series, therefore commented out
   /*
   test('#example Test GET /api/books', function(done){
      chai.request(server)
@@ -29,7 +30,8 @@ suite('Functional Tests', function() {
         assert.property(res.body[0], '_id', 'Books in array should contain _id');
         done();
       });
-  });*/
+  });
+  */
 
   suite('Routing tests', function() {
 
@@ -42,11 +44,11 @@ suite('Functional Tests', function() {
         .send({
           title: 'Title'
         })
-        .end(function(err, res){
-          
+        .end(function(err, res){          
           res.should.have.status(201);
-          res.should.be.json;  
-          res.body.should.be.a('object');          
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.have.property('_id');     
           res.body.should.have.property('title').eql('Title');
           res.body.should.have.property('commentcount').eql(0);
           done();
@@ -85,6 +87,15 @@ suite('Functional Tests', function() {
             res.body.should.be.a('array');       
             res.body[0].should.have.property('title');
             res.body[0].should.have.property('commentcount');
+            res.body[0].should.have.property('_id');
+
+            //ensuring comments is taken out of response
+            res.body[0].should.not.have.property('comments');
+
+            // ensuring nothing from my website will be cached in my client          
+            res.should.have.header('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+            //ensuring header X-Powered-By is set correctly to  PHP 4.2.0 normally a separate test case but I did not want to change amount of tests
+            res.should.have.header('x-powered-by', 'PHP 4.2.0');
             done();
           });
         });
@@ -131,7 +142,10 @@ suite('Functional Tests', function() {
             .get('/api/books/'+id)
             .end(function(err, res){
               res.should.have.status(200);
-              res.body.should.have.property('title').eql('valid id in db');            
+              res.body.should.have.property('title').eql('valid id in db');
+
+              //returning comments are an empty array
+              res.body.should.have.property('comments').eql([]);       
               done();
             });            
           })  

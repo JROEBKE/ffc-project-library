@@ -41,10 +41,11 @@ module.exports = function (app) {
             return books;
           }
         })
+        //console.log(result);
         //take out comments
-        result = result.map(r => ({_id: r.id, title: r.title, commentcount: r.commentcount}));
+        let output = result.map(r => ({_id: r.id, title: r.title, commentcount: r.commentcount}));
                 
-        res.status(200).json(result);
+        res.status(200).json(output);
       })
     )
     
