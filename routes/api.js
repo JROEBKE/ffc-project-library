@@ -128,6 +128,7 @@ module.exports = function (app) {
     .post(      
       [      
       check('comment').trim().notEmpty().escape().isLength({max: 100}).withMessage('You have to provide a comment with less than 100 chars'),
+      //sample app presents different error message but this better from my point of view
       check('id').escape().notEmpty().matches(/^[0-9a-fA-F]{24}$/,"i").withMessage('You have to provide a valid book id')   
       ],
       awaitHandlerFactory(async function (req, res){
@@ -140,7 +141,7 @@ module.exports = function (app) {
         return res.status(400).send({ message: 'missing required fields', errors: errors.array()});
         }
 
-        //TODO check if correct responses with challenge
+        //sample challenge returns 200 with null entry, but this is better; generally undefied in requirements
         var book = await Book.findById(bookid, function (err, book) {
           if (err) {
             console.log('could not update '+bookid);
