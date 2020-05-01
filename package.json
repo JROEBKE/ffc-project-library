@@ -24,7 +24,8 @@
 		"zombie": "^5.0.5"
 	},
 	"engines": {
-		"node": "4.9.1"
+		"node": "8.11.1",
+		"npm": "6.10.3"
 	},
 	"repository": {
 		"type": "git",
